@@ -92,17 +92,16 @@ def predict_air_quality(model, image):
 
 def main():
     # Title and description
-    st.title("🌤️ Prediksi Kualitas Udara Berdasar Gambar")
-    st.markdown("Unggah gambar langit di sekitar anda untuk memprediksi tingkat kualitas udara.")
+    st.title("🌤️ AirPolNet")
+    st.markdown("Unggah citra langit di sekitar anda untuk mendeteksi tingkat kualitas udara.")
     
     # Sidebar
     st.sidebar.header("Informasi Model")
     st.sidebar.info("""
     **AirPolNet:**
-    - Arsitektur: CNN (Convolutional Neural Network)
+    - Arsitektur: VGG16
     - Framework: TensorFlow/Keras
-    - Ukuran Input: 224x224 piksel
-    - Kelas: 4 kategori kualitas udara
+    - Kategori: 4 kategori kualitas udara
     """)
 
     st.sidebar.header("Kategori Kualitas Udara")
@@ -117,9 +116,9 @@ def main():
     
     # File uploader
     uploaded_file = st.file_uploader(
-        "Choose an image file", 
+        "Silahkan unggah citra langit anda:", 
         type=['jpg', 'jpeg', 'png', 'bmp', 'tiff'],
-        help="Upload an image to predict its air quality level"
+        help="Dukungan format: JPG, JPEG, PNG, BMP, TIFF"
     )
     
     if uploaded_file is not None:
@@ -127,7 +126,7 @@ def main():
         col1, col2 = st.columns([1, 1])
         
         with col1:
-            st.subheader("Uploaded Image")
+            st.subheader("Citra langit")
             image = Image.open(uploaded_file)
             st.image(image, caption="Original Image", use_column_width=True)
             
@@ -136,10 +135,10 @@ def main():
             st.write(f"**Image Mode:** {image.mode}")
         
         with col2:
-            st.subheader("Prediction Results")
+            st.subheader("Hasil Deteksi")
             
             # Make prediction
-            with st.spinner("Analyzing image..."):
+            with st.spinner("Menganalisis citra..."):
                 predicted_class, confidence, class_probabilities = predict_air_quality(model, image)
             
             if predicted_class is not None:
@@ -153,7 +152,7 @@ def main():
                            f'</div>', unsafe_allow_html=True)
                 
                 # Display all class probabilities
-                st.subheader("📊 All Class Probabilities")
+                st.subheader("📊 Probabilitas Semua Kategori")
                 
                 # Sort probabilities in descending order
                 sorted_probs = sorted(class_probabilities.items(), key=lambda x: x[1], reverse=True)
@@ -167,25 +166,25 @@ def main():
                     st.write("")
                 
                 # Additional information
-                st.subheader("ℹ️ Interpretation")
+                st.subheader("ℹ️ Interpretasi Hasil")
                 if predicted_label == "Baik":
                     st.success("🟢 Kualitas udara baik. Aman untuk melakukan aktivitas di luar ruangan")
                 elif predicted_label == "Sedang":
-                    st.warning("🟡 Air quality is moderate. Sensitive individuals should consider limiting outdoor activities.")
+                    st.warning("🟡 Kualitas udara sedang. Kurangi aktivitas fisik yang terlalu lama atau berat di luar ruangan.")
                 elif predicted_label == "Tidak Sehat":
-                    st.warning("🟠 Air quality is unhealthy. Everyone should limit outdoor activities.")
+                    st.warning("🟠 Kualitas udara tidak sehat. Usahakan untuk membatasi aktivitas di luar ruangan.")
                 else:  # Sangat Tidak Sehat
-                    st.error("🔴 Air quality is very unhealthy. Avoid outdoor activities and stay indoors.")
-    
+                    st.error("🔴 Kualitas udara sangat tidak sehat. Hindari aktivitas di luar ruangan dan tetap di dalam rumah.")
+
     # Instructions
     st.markdown("---")
-    st.subheader("📋 How to Use")
+    st.subheader("📋 Cara Menggunakan:")
     st.markdown("""
-    1. **Upload an Image**: Click 'Browse files' and select an image from your device
-    2. **Wait for Processing**: The model will analyze the image automatically
-    3. **View Results**: See the predicted air quality category and confidence score
-    4. **Interpret**: Use the color-coded results and recommendations provided
-    
+    1. **Unggah citra**: Klik tombol 'Browse files' untuk memilih citra langit
+    2. **Tunggu Proses**: Model akan menganalisis citra secara otomatis
+    3. **Lihat Hasil**: Lihat kategori kualitas udara yang diprediksi dan skor kepercayaan
+    4. **Interpretasi**: Gunakan hasil yang diberi kode warna dan rekomendasi yang disediakan untuk memahami kualitas udara di sekitar Anda.
+
     **Supported Formats**: JPG, JPEG, PNG, BMP, TIFF
     """)
     
@@ -193,7 +192,7 @@ def main():
     st.markdown("---")
     st.markdown(
         '<div style="text-align: center; color: gray;">'
-        'Air Quality Prediction Model v4 | Built with Streamlit & TensorFlow'
+        'Air Quality Detection | TensorFlow & Streamlit'
         '</div>', 
         unsafe_allow_html=True
     )
